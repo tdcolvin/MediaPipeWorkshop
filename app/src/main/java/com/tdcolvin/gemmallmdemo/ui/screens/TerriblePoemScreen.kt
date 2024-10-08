@@ -196,7 +196,11 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
     }
 
     fun generateTerriblePoem(poemSubject: String) {
-        val prompt = "Write a single verse, terrible poem about the following subject: ${poemSubject}. It should be 4 lines long and almost, but not quite, rhyme. It should be intentionally terrible, with bonus points for some factual inaccuracies. Respond with nothing other than the 4 lines of the poem. Do not include any other text."
+        val prompt = "Write a single verse, terrible poem about the following subject: " +
+                "${poemSubject}. It should be 4 lines long and almost, but not quite, rhyme. It " +
+                "should be intentionally terrible, with bonus points for some factual inaccuracies. " +
+                "Respond only with the 4 lines of the poem. Do not include any other text."
+
         uiState.update {
             it.copy(poemComplete = false, poemVerse = "", poemTitle = poemSubject)
         }
