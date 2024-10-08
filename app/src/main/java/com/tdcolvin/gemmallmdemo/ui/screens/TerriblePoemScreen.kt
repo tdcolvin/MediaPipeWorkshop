@@ -37,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @Composable
 fun TerriblePoemScreen(
@@ -175,10 +176,9 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
             // Set the configuration options for the LLM Inference task
             val options = LlmInferenceOptions.builder()
                 .setModelPath("/data/local/tmp/gemma2-2b-it-cpu-int8.task")
-                .setMaxTokens(1000)
-                .setTopK(40)
-                .setTemperature(0.8f)
-                .setRandomSeed(101)
+                .setMaxTokens(500)
+                .setTemperature(1.0f)
+                .setRandomSeed(Random.nextInt())
                 .setResultListener { partialResult, done ->
                     uiState.update {
                         it.copy(
