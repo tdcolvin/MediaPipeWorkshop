@@ -172,8 +172,9 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
     private var llmInference: LlmInference? = null
 
     init {
+        //TODO: load the LlmInference object
         viewModelScope.launch(Dispatchers.IO) {
-            // Set the configuration options for the LLM Inference task
+
             val options = LlmInferenceOptions.builder()
                 .setModelPath("/data/local/tmp/gemma2-2b-it-cpu-int8.task")
                 .setMaxTokens(500)
@@ -189,8 +190,8 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
                 }
                 .build()
 
-            // Create an instance of the LLM Inference task
             llmInference = LlmInference.createFromOptions(application, options)
+
             uiState.update { it.copy(loaded = true) }
         }
     }
@@ -204,6 +205,8 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
         uiState.update {
             it.copy(poemComplete = false, poemVerse = "", poemTitle = poemSubject)
         }
+
+        //TODO: tell the MediaPipe library to start generating text
         viewModelScope.launch(Dispatchers.IO) {
             llmInference?.generateResponseAsync(prompt)
         }
