@@ -173,27 +173,8 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
 
     init {
         //TODO: load the LlmInference object
-        viewModelScope.launch(Dispatchers.IO) {
 
-            val options = LlmInferenceOptions.builder()
-                .setModelPath("/data/local/tmp/gemma2-2b-it-cpu-int8.task")
-                .setMaxTokens(500)
-                .setTemperature(1.0f)
-                .setRandomSeed(Random.nextInt())
-                .setResultListener { partialResult, done ->
-                    uiState.update {
-                        it.copy(
-                            poemComplete = done,
-                            poemVerse =  (it.poemVerse ?: "") + partialResult
-                        )
-                    }
-                }
-                .build()
-
-            llmInference = LlmInference.createFromOptions(application, options)
-
-            uiState.update { it.copy(loaded = true) }
-        }
+        uiState.update { it.copy(loaded = true) }
     }
 
     fun generateTerriblePoem(poemSubject: String) {
@@ -207,8 +188,6 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
         }
 
         //TODO: tell the MediaPipe library to start generating text
-        viewModelScope.launch(Dispatchers.IO) {
-            llmInference?.generateResponseAsync(prompt)
-        }
+
     }
 }
