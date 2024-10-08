@@ -183,7 +183,7 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
                     uiState.update {
                         it.copy(
                             poemComplete = done,
-                            poemVerse = it.poemVerse + partialResult
+                            poemVerse =  (it.poemVerse ?: "") + partialResult
                         )
                     }
                 }
