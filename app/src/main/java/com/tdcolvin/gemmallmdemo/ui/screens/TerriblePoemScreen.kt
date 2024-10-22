@@ -57,6 +57,7 @@ fun TerriblePoemScreen(
                 poemTitle = uiState.poemTitle,
                 poemVerse = uiState.poemVerse,
                 poemComplete = uiState.poemComplete,
+                loadingError = uiState.loadingError,
                 generateTerriblePoem = viewModel::generateTerriblePoem
             )
         }
@@ -69,6 +70,7 @@ fun TerriblePoemContent(
     poemTitle: String?,
     poemVerse: String?,
     poemComplete: Boolean,
+    loadingError: Throwable?,
     generateTerriblePoem: (String) -> Unit,
 ) {
     var poemSubject by remember { mutableStateOf(initialPoemSubject ?: "") }
@@ -96,9 +98,13 @@ fun TerriblePoemContent(
         }
         Button(
             onClick = { generateTerriblePoem(poemSubject) },
-            enabled = poemComplete
+            enabled = poemComplete && loadingError == null
         ) {
             Text("Generate Terrible Poetry")
+        }
+
+        if (loadingError != null) {
+            Text("Error loading model: ${loadingError.message ?: "[Unknown]"}")
         }
 
         Poem(
@@ -161,6 +167,7 @@ fun Poem(
 
 data class TerriblePoemUiState(
     val loaded: Boolean = false,
+    val loadingError: Throwable? = null,
     val poemTitle: String? = null,
     val poemVerse: String? = null,
     val poemComplete: Boolean = true
@@ -190,9 +197,13 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
                 }
                 .build()
 
-            llmInference = LlmInference.createFromOptions(application, options)
-
-            uiState.update { it.copy(loaded = true) }
+            try {
+                llmInference = LlmInference.createFromOptions(application, options)
+                uiState.update { it.copy(loaded = true, loadingError = null) }
+            }
+            catch (th: Throwable) {
+                uiState.update { it.copy(loaded = true, loadingError = th) }
+            }
         }
     }
 
