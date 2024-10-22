@@ -57,8 +57,10 @@ fun TerriblePoemScreen(
                 poemTitle = uiState.poemTitle,
                 poemVerse = uiState.poemVerse,
                 poemComplete = uiState.poemComplete,
+                reactions = uiState.reactions,
                 loadingError = uiState.loadingError,
-                generateTerriblePoem = viewModel::generateTerriblePoem
+                generateTerriblePoem = viewModel::generateTerriblePoem,
+                addReaction = viewModel::addReaction
             )
         }
     }
@@ -70,12 +72,15 @@ fun TerriblePoemContent(
     poemTitle: String?,
     poemVerse: String?,
     poemComplete: Boolean,
+    reactions: String,
     loadingError: Throwable?,
     generateTerriblePoem: (String) -> Unit,
+    addReaction: (String) -> Unit,
 ) {
     var poemSubject by remember { mutableStateOf(initialPoemSubject ?: "") }
 
     var showTakePhotoDialog by remember { mutableStateOf(false) }
+    var showReactionGestureDialog by remember { mutableStateOf(false) }
 
     // If we have a subject passed in, generate the poem immediately
     LaunchedEffect(initialPoemSubject) {
@@ -113,6 +118,12 @@ fun TerriblePoemContent(
             verses = poemVerse ?: "",
             complete = poemComplete
         )
+
+        Text(reactions)
+
+        Button(onClick = { showReactionGestureDialog = true }) {
+            Text("React")
+        }
     }
 
     if (showTakePhotoDialog) {
@@ -123,6 +134,13 @@ fun TerriblePoemContent(
                 poemSubject = subject
                 generateTerriblePoem(subject)
             }
+        )
+    }
+
+    if (showReactionGestureDialog) {
+        ReactionGestureDialog(
+            onDismiss = { showReactionGestureDialog = false },
+            onAddReaction = addReaction
         )
     }
 }
@@ -140,6 +158,29 @@ fun TakePhotoDialog(
                 .fillMaxSize(),
         ) {
             TakePhotoScreen(modifier = Modifier.fillMaxSize(), setPhotoSubject = onSetSubject)
+        }
+    }
+}
+
+@Composable
+fun ReactionGestureDialog(
+    onDismiss: () -> Unit,
+    onAddReaction: (String) -> Unit
+) {
+    Dialog(
+        onDismissRequest = { onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            ReactionGestureScreen(
+                modifier = Modifier.fillMaxSize(),
+                setGesture = { gesture ->
+                    gesture?.let { onAddReaction(it) }
+                    onDismiss()
+                }
+            )
         }
     }
 }
@@ -170,7 +211,8 @@ data class TerriblePoemUiState(
     val loadingError: Throwable? = null,
     val poemTitle: String? = null,
     val poemVerse: String? = null,
-    val poemComplete: Boolean = true
+    val poemComplete: Boolean = true,
+    val reactions: String = "",
 )
 
 class TerriblePoemViewModel(application: Application): AndroidViewModel(application) {
@@ -214,12 +256,16 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
                 "Respond only with the 4 lines of the poem. Do not include any other text."
 
         uiState.update {
-            it.copy(poemComplete = false, poemVerse = "", poemTitle = poemSubject)
+            it.copy(poemComplete = false, poemVerse = "", poemTitle = poemSubject, reactions = "")
         }
 
         //TODO: tell the MediaPipe library to start generating text
         viewModelScope.launch(Dispatchers.IO) {
             llmInference?.generateResponseAsync(prompt)
         }
+    }
+
+    fun addReaction(reaction: String) {
+        uiState.update { it.copy(reactions = it.reactions + " " + reaction) }
     }
 }
