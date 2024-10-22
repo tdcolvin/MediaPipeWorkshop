@@ -183,7 +183,7 @@ class TakePhotoViewModel(application: Application): AndroidViewModel(application
                     BaseOptions.builder().setModelAssetPath("efficientnet_lite2.tflite").build()
                 )
                 .setRunningMode(RunningMode.IMAGE)
-                .setScoreThreshold(0.5f)
+                .setScoreThreshold(0.1f)
                 .setMaxResults(10)
                 .build()
 
