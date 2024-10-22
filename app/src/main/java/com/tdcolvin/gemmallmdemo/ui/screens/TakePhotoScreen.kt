@@ -1,16 +1,12 @@
 package com.tdcolvin.gemmallmdemo.ui.screens
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,19 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +27,7 @@ import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.imageclassifier.ImageClassifier
+import com.tdcolvin.gemmallmdemo.ui.components.CameraPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -95,58 +85,6 @@ fun TakePhotoScreen(
             }
         }
     }
-}
-
-//Suppressions needed to manually shut down the cameraProvider when the composable exits the composition
-@SuppressLint("RestrictedApi", "VisibleForTests")
-@Composable
-fun CameraPreview(
-    modifier: Modifier = Modifier,
-    imageCaptureUseCase: ImageCapture
-) {
-
-    val previewUseCase = remember { androidx.camera.core.Preview.Builder().build() }
-
-    var cameraProvider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            cameraProvider?.unbindAll()
-            cameraProvider?.shutdown()
-        }
-    }
-
-    val localContext = LocalContext.current
-    val localLifecycleOwner = LocalLifecycleOwner.current
-
-    fun rebindCameraProvider() {
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
-        Log.i("camerarebind", "camerarebind, prov=$cameraProvider")
-        cameraProvider?.bindToLifecycle(
-            localLifecycleOwner,
-            cameraSelector,
-            previewUseCase, imageCaptureUseCase
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        val providerFuture = ProcessCameraProvider.getInstance(localContext)
-        providerFuture.addListener({
-            cameraProvider = providerFuture.get()
-            rebindCameraProvider()
-        }, ContextCompat.getMainExecutor(localContext))
-    }
-
-    AndroidView(modifier = modifier,
-        factory = { context ->
-            PreviewView(context).also {
-                previewUseCase.setSurfaceProvider(it.surfaceProvider)
-                rebindCameraProvider()
-            }
-        }
-    )
 }
 
 data class TakePhotoUiState(
