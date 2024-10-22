@@ -164,9 +164,15 @@ class TakePhotoViewModel(application: Application): AndroidViewModel(application
         }
 
         viewModelScope.launch(Dispatchers.Default) {
-            // Create a bitmap that's rotated as needed to match display orientation
-            val rotation = Matrix().apply { postRotate(image.imageInfo.rotationDegrees.toFloat()) }
-            val bmp = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, rotation, true)
+            val inputWidth = 260
+            val inputHeight = 260
+
+            // Create a bitmap that's scaled as needed for the model, and rotated as needed to match display orientation
+            val scaleAndRotate = Matrix().apply {
+                postScale(inputWidth.toFloat() / image.width, inputHeight.toFloat() / image.height)
+                postRotate(image.imageInfo.rotationDegrees.toFloat())
+            }
+            val bmp = Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, scaleAndRotate, true)
 
             image.close()
 
