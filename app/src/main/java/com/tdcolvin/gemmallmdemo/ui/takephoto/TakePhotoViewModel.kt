@@ -83,16 +83,6 @@ class TakePhotoViewModel(application: Application): AndroidViewModel(application
            * To see a full example, check out the "answers" branch
         */
 
-        val options = ImageClassifier.ImageClassifierOptions.builder()
-            .setBaseOptions(
-                BaseOptions.builder().setModelAssetPath("efficientnet_lite2.tflite").build()
-            )
-            .setRunningMode(RunningMode.IMAGE)
-            .setScoreThreshold(0.1f)
-            .setMaxResults(10)
-            .build()
-
-        val imageClassifier = ImageClassifier.createFromOptions(getApplication(), options)
-        return imageClassifier.classify(BitmapImageBuilder(bitmap).build()).classificationResult()
+        return null
     }
 }

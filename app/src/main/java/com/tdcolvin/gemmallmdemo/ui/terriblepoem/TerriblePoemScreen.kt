@@ -111,11 +111,11 @@ fun TerriblePoemContent(
             complete = poemComplete
         )
 
-        Text(reactions)
-
-        Button(onClick = { showReactionGestureDialog = true }) {
-            Text("React")
-        }
+//        Text(reactions)
+//
+//        Button(onClick = { showReactionGestureDialog = true }) {
+//            Text("React")
+//        }
     }
 
     if (showTakePhotoDialog) {
