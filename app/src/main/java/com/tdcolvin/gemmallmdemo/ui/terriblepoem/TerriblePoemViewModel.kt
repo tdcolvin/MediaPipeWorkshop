@@ -26,7 +26,7 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
     private var llmInference: LlmInference? = null
 
     init {
-        //TODO: load the LlmInference object
+        // Load the LlmInference object
         viewModelScope.launch(Dispatchers.IO) {
 
             val options = LlmInferenceOptions.builder()
@@ -54,6 +54,7 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    // Called when the user presses the Generate Terrible Poem button
     fun generateTerriblePoem(poemSubject: String) {
         val prompt = "Write a single verse, terrible poem about the following subject: " +
                 "${poemSubject}. It should be 4 lines long and almost, but not quite, rhyme. It " +
@@ -64,7 +65,7 @@ class TerriblePoemViewModel(application: Application): AndroidViewModel(applicat
             it.copy(poemComplete = false, poemVerse = "", poemTitle = poemSubject, reactions = "")
         }
 
-        //TODO: tell the MediaPipe library to start generating text
+        // Tell the MediaPipe library to start generating text
         viewModelScope.launch(Dispatchers.IO) {
             llmInference?.generateResponseAsync(prompt)
         }
