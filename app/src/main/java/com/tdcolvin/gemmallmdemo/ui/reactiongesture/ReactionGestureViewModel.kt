@@ -45,18 +45,6 @@ class ReactionGestureViewModel(application: Application): AndroidViewModel(appli
 
              * Again, there's a full example on the "answers" branch
         */
-
-        val baseOptionsBuilder = BaseOptions.builder().setModelAssetPath("gesture_recognizer.task")
-        val baseOptions = baseOptionsBuilder.build()
-
-        val optionsBuilder =
-            GestureRecognizer.GestureRecognizerOptions.builder()
-                .setBaseOptions(baseOptions)
-                .setResultListener { result, _ -> handleGestureRecognizerResult(result) }
-                .setRunningMode(RunningMode.LIVE_STREAM)
-
-        val options = optionsBuilder.build()
-        GestureRecognizer.createFromOptions(getApplication(), options)
     }
 
     private fun handleGestureRecognizerResult(result: GestureRecognizerResult) {
@@ -94,7 +82,7 @@ class ReactionGestureViewModel(application: Application): AndroidViewModel(appli
             image.close()
 
             /* TODO: call the recognizeAsync function of your gesture recognizer here */
-            gestureRecognizer.recognizeAsync(BitmapImageBuilder(bmp).build(), System.currentTimeMillis())
+
         }
     }
 }
