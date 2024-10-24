@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.tdcolvin.gemmallmdemo.ui.screens.TerriblePoemScreen
+import com.tdcolvin.gemmallmdemo.ui.terriblepoem.TerriblePoemScreen
 import com.tdcolvin.gemmallmdemo.ui.theme.GemmaLLMDemoTheme
 
 class MainActivity : ComponentActivity() {
