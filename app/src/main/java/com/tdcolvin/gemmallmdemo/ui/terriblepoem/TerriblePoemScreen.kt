@@ -89,9 +89,9 @@ fun TerriblePoemContent(
                 value = poemSubject,
                 onValueChange = { poemSubject = it }
             )
-            Button(onClick = { showTakePhotoDialog = true }) {
-                Icon(painter = painterResource(id = R.drawable.baseline_camera_alt_24), contentDescription = "Take a photo")
-            }
+//            Button(onClick = { showTakePhotoDialog = true }) {
+//                Icon(painter = painterResource(id = R.drawable.baseline_camera_alt_24), contentDescription = "Take a photo")
+//            }
         }
         Button(
             onClick = { generateTerriblePoem(poemSubject) },
